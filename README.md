@@ -12,7 +12,6 @@ This library has a few key features:
 - A server-based velocity tracker for estimating the player's movement vectors without specialized packets
 - A library of modular, pre-made, geometric and animated particle effects
 - A whole bunch of useful utility methods for various mathematical operations, data structures, algorithms, text and sounds.
-- An experimental particle packet bundler that drastically reduces network lag caused by particles (inspired by the PulseMC project)
 
 ## Texture Pack
 The server has the ability to automatically generate and serve the mod's texture pack to your players when they connect. To do this, you must enable auto-host. This is super easy to do in a few steps:
