@@ -14,6 +14,15 @@ This library has a few key features:
 - A whole bunch of useful utility methods for various mathematical operations, data structures, algorithms, text and sounds.
 - An experimental particle packet bundler that drastically reduces network lag caused by particles (inspired by the PulseMC project)
 
+## Texture Pack
+The server has the ability to automatically generate and serve the mod's texture pack to your players when they connect. To do this, you must enable auto-host. This is super easy to do in a few steps:
+1. Launch the server with the mod installed at least once to generate the configs
+2. Go into the 'config' folder of the server, there should be a folder called 'polymer', and inside that there should be a file called 'auto-host.json'
+3. In 'auto-host.json', in the first few lines there will be a line that says `"enabled": false`, change this to true.
+4. (Optional) You can also set the value to make the resource pack required by players, or set the "message" line to inform players why the resource pack is important to download when they are prompted to have it be auto downloaded.
+
+If everything is done correctly, then players will automatically load into the server with the resource pack installed.
+
 ### Try My Other Mods!
 All server-side Fabric mods — no client installation required.
 

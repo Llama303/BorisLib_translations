@@ -6,6 +6,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.protocol.game.ClientboundSoundPacket;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
@@ -16,6 +17,11 @@ import net.minecraft.world.level.Level;
 import static net.borisshoes.borislib.BorisLib.LOGGER;
 
 public class SoundUtils {
+   
+   public static Holder.Reference<SoundEvent> getSound(String id){
+      return BuiltInRegistries.SOUND_EVENT.get(Identifier.withDefaultNamespace(id)).get();
+   }
+   
    public static void playSongToPlayer(ServerPlayer player, Holder<SoundEvent> event, float vol, float pitch){
       player.connection.send(new ClientboundSoundPacket(event, SoundSource.PLAYERS, player.position().x, player.position().y, player.position().z, vol, pitch, 0));
    }

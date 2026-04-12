@@ -30,6 +30,7 @@ import net.minecraft.server.players.NameAndId;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.tags.TagKey;
+import net.minecraft.util.Mth;
 import net.minecraft.util.ProblemReporter;
 import net.minecraft.util.Tuple;
 import net.minecraft.world.Container;
@@ -41,9 +42,8 @@ import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.ProjectileUtil;
-import net.minecraft.world.item.Item;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.ItemStackTemplate;
+import net.minecraft.world.entity.projectile.arrow.AbstractArrow;
+import net.minecraft.world.item.*;
 import net.minecraft.world.item.component.ItemContainerContents;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.EnchantmentInstance;
@@ -63,6 +63,46 @@ import static net.borisshoes.borislib.BorisLib.LOGGER;
 import static org.apache.logging.log4j.Level.WARN;
 
 public class MinecraftUtils {
+   
+   public static Set<Block> getSimilarBlocks(Block baseBlock){
+      Set<Block> allowedBlocks = new HashSet<>();
+      allowedBlocks.add(baseBlock);
+      Identifier baseId = BuiltInRegistries.BLOCK.getKey(baseBlock);
+      for(Identifier similarId : BuiltInRegistries.BLOCK.keySet()){
+         if(similarId.getPath().equals(baseId.getPath()))
+            allowedBlocks.add(BuiltInRegistries.BLOCK.getValue(similarId));
+      }
+      return allowedBlocks;
+   }
+   
+   public static float getArrowPercentage(AbstractArrow arrow){ // 0.5 is usually smallest natural value and 2.5-3 is usually largest natural value
+      return getArrowPercentage(arrow, 0f);
+   }
+   
+   public static float getArrowPercentage(AbstractArrow arrow, float minPercent){ // 0.5 is usually smallest natural value and 2.5-3 is usually largest natural value
+      return Math.max(minPercent, ((float) Mth.clamp(arrow.getDeltaMovement().length(), 0.5, 10) - 0.5f) / 2.5f);
+   }
+   
+   public static Item getVanillaDyeItem(DyeColor color){
+      return switch(color){
+         case WHITE -> Items.WHITE_DYE;
+         case ORANGE -> Items.ORANGE_DYE;
+         case MAGENTA -> Items.MAGENTA_DYE;
+         case LIGHT_BLUE -> Items.LIGHT_BLUE_DYE;
+         case YELLOW -> Items.YELLOW_DYE;
+         case LIME -> Items.LIME_DYE;
+         case PINK -> Items.PINK_DYE;
+         case GRAY -> Items.GRAY_DYE;
+         case LIGHT_GRAY -> Items.LIGHT_GRAY_DYE;
+         case CYAN -> Items.CYAN_DYE;
+         case PURPLE -> Items.PURPLE_DYE;
+         case BLUE -> Items.BLUE_DYE;
+         case BROWN -> Items.BROWN_DYE;
+         case GREEN -> Items.GREEN_DYE;
+         case RED -> Items.RED_DYE;
+         case BLACK -> Items.BLACK_DYE;
+      };
+   }
    
    public static LivingEntity findLivingEntity(MinecraftServer server, UUID entityId){
       for(ServerLevel level : server.getAllLevels()){
