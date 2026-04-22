@@ -75,6 +75,9 @@ public final class GlobalState extends SavedData {
    public static final SavedDataType<GlobalState> TYPE = new SavedDataType<>(Identifier.parse(FILE_ID), GlobalState::new, CODEC, DataFixTypes.SAVED_DATA_COMMAND_STORAGE);
    
    public static GlobalState get(ServerLevel ow){
+      if(ow == null){
+         throw new IllegalArgumentException("GlobalState.get() received null overworld ServerLevel. Ensure the server is fully started before accessing global data.");
+      }
       return ow.getDataStorage().computeIfAbsent(TYPE);
    }
    

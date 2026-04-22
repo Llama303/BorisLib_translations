@@ -77,6 +77,9 @@ public final class WorldState extends SavedData {
    public static final SavedDataType<WorldState> TYPE = new SavedDataType<>(Identifier.parse(FILE_ID), WorldState::new, CODEC, DataFixTypes.SAVED_DATA_COMMAND_STORAGE);
    
    public static WorldState get(ServerLevel w){
+      if(w == null){
+         throw new IllegalArgumentException("WorldState.get() received null ServerLevel. Ensure the dimension is loaded before accessing world data.");
+      }
       return w.getDataStorage().computeIfAbsent(TYPE);
    }
    
