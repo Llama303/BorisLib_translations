@@ -180,6 +180,35 @@ public final class DataAccess {
       DIRTY_PLAYERS.add(u);
    }
    
+   /**
+    * Explicitly marks global state as dirty so it is flushed on the next autosave.
+    * <p>
+    * This is only needed if you mutated a global data object in-place and cannot rely
+    * on the automatic dirty-on-access behaviour of {@link #getGlobal}.
+    */
+   public static void markGlobalDirty(){
+      ensureServerSide("markGlobalDirty");
+      ServerLevel overworld = BorisLib.SERVER.overworld();
+      GlobalState.get(overworld).setDirty();
+   }
+   
+   /**
+    * Explicitly marks the given dimension's world state as dirty so it is flushed on the next autosave.
+    * <p>
+    * This is only needed if you mutated a world data object in-place and cannot rely
+    * on the automatic dirty-on-access behaviour of {@link #getWorld}.
+    */
+   public static void markWorldDirty(ResourceKey<Level> wk){
+      ensureServerSide("markWorldDirty");
+      if(wk == null) throw new IllegalArgumentException("DataAccess.markWorldDirty() received null world key");
+      ServerLevel w = BorisLib.SERVER.getLevel(wk);
+      if(w == null){
+         BorisLib.LOGGER.error("DataAccess.markWorldDirty() could not resolve loaded ServerLevel for dimension {}", wk.identifier());
+         throw new IllegalStateException("DataAccess.markWorldDirty() could not resolve loaded ServerLevel for dimension " + wk.identifier());
+      }
+      WorldState.get(w).setDirty();
+   }
+   
    public static <T extends StorableData> T getGlobal(DataKey<T> key){
       ensureServerSide("getGlobal");
       ServerLevel overworld = BorisLib.SERVER.overworld();

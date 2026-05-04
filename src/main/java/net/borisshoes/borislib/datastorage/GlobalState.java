@@ -137,7 +137,12 @@ public final class GlobalState extends SavedData {
    public <T extends StorableData> T getLive(DataKey<T> key){
       Map<String, Object> modObjs = objects.computeIfAbsent(key.modId(), k -> new HashMap<>());
       Object got = modObjs.get(key.key());
-      if(got != null) return (T) got;
+      if(got != null){
+         // Pessimistic dirty on access — covers implementations that don't call markDirty().
+         // Implementations using markDirty() also propagate immediately via the injected callback.
+         setDirty();
+         return (T) got;
+      }
       
       Map<String, CompoundTag> modRaw = data.get(key.modId());
       if(modRaw != null){
@@ -145,6 +150,7 @@ public final class GlobalState extends SavedData {
          if(tag != null){
             T decoded = decode(key, tag, key.id().toString());
             if(decoded != null){
+               decoded.setDirtyCallback(this::setDirty);
                modObjs.put(key.key(), decoded);
                if(modRaw.isEmpty()) data.remove(key.modId());
                setDirty();
@@ -162,6 +168,7 @@ public final class GlobalState extends SavedData {
          BorisLib.LOGGER.error("DataKey<{}> default factory returned null for GLOBAL scope. This is a critical error.", key.id());
          throw new IllegalStateException("DataKey<" + key.id() + "> default factory returned null for GLOBAL scope");
       }
+      created.setDirtyCallback(this::setDirty);
       modObjs.put(key.key(), created);
       setDirty();
       return created;
@@ -173,6 +180,7 @@ public final class GlobalState extends SavedData {
          BorisLib.LOGGER.error("Cannot store null value for global key {} and default factory also returned null", key.id());
          return;
       }
+      toStore.setDirtyCallback(this::setDirty);
       objects.computeIfAbsent(key.modId(), k -> new HashMap<>()).put(key.key(), toStore);
       Map<String, CompoundTag> modRaw = data.get(key.modId());
       if(modRaw != null){
@@ -226,3 +234,4 @@ public final class GlobalState extends SavedData {
       }
    }
 }
+
